@@ -1,15 +1,19 @@
 package com.github.oxo42.stateless4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.util.Log;
+
 import com.github.oxo42.stateless4j.delegates.Action1;
 import com.github.oxo42.stateless4j.delegates.Action2;
 import com.github.oxo42.stateless4j.delegates.Func;
 import com.github.oxo42.stateless4j.transitions.Transition;
-import com.github.oxo42.stateless4j.triggers.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.github.oxo42.stateless4j.triggers.TriggerBehaviour;
+import com.github.oxo42.stateless4j.triggers.TriggerWithParameters;
+import com.github.oxo42.stateless4j.triggers.TriggerWithParameters1;
+import com.github.oxo42.stateless4j.triggers.TriggerWithParameters2;
+import com.github.oxo42.stateless4j.triggers.TriggerWithParameters3;
 
 /**
  * Models behaviour as transitions between a finite set of states
@@ -18,11 +22,12 @@ import java.util.List;
  * @param <T> The type used to represent the triggers that cause state transitions
  */
 public class StateMachine<S, T> {
+	
+	public static final String TAG = StateMachine.class.getSimpleName();
 
     protected final StateMachineConfig<S, T> config;
     protected final Func<S> stateAccessor;
     protected final Action1<S> stateMutator;
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     protected Action2<S, T> unhandledTriggerAction = new Action2<S, T>() {
 
         public void doIt(S state, T trigger) {
@@ -177,7 +182,7 @@ public class StateMachine<S, T> {
     }
 
     protected void publicFire(T trigger, Object... args) {
-        logger.info("Firing " + trigger);
+        Log.i(TAG, "Firing " + trigger);
         TriggerWithParameters<S, T> configuration = config.getTriggerConfiguration(trigger);
         if (configuration != null) {
             configuration.validateParameters(args);
@@ -195,7 +200,9 @@ public class StateMachine<S, T> {
             Transition<S, T> transition = new Transition<>(source, destination.get(), trigger);
 
             getCurrentRepresentation().exit(transition);
-            setState(destination.get());
+            S s = destination.get();
+            setState(s);
+            Log.i(TAG, "Current state is: " + s);
             getCurrentRepresentation().enter(transition, args);
         }
     }
