@@ -3,11 +3,10 @@ package com.github.oxo42.stateless4j;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 import com.github.oxo42.stateless4j.delegates.Action1;
 import com.github.oxo42.stateless4j.delegates.Action2;
 import com.github.oxo42.stateless4j.delegates.Func;
+import com.github.oxo42.stateless4j.logger.Logger;
 import com.github.oxo42.stateless4j.transitions.Transition;
 import com.github.oxo42.stateless4j.triggers.TriggerBehaviour;
 import com.github.oxo42.stateless4j.triggers.TriggerWithParameters;
@@ -24,6 +23,8 @@ import com.github.oxo42.stateless4j.triggers.TriggerWithParameters3;
 public class StateMachine<S, T> {
 	
 	public static final String TAG = StateMachine.class.getSimpleName();
+	
+	private Logger log;
 
     protected final StateMachineConfig<S, T> config;
     protected final Func<S> stateAccessor;
@@ -182,7 +183,7 @@ public class StateMachine<S, T> {
     }
 
     protected void publicFire(T trigger, Object... args) {
-        Log.i(TAG, "Firing " + trigger);
+    	if (log != null) log.debug(TAG, "Firing " + trigger);
         TriggerWithParameters<S, T> configuration = config.getTriggerConfiguration(trigger);
         if (configuration != null) {
             configuration.validateParameters(args);
@@ -202,7 +203,7 @@ public class StateMachine<S, T> {
             getCurrentRepresentation().exit(transition);
             S s = destination.get();
             setState(s);
-            Log.i(TAG, "Current state is: " + s);
+            if (log != null) log.debug(TAG, "Current state is: " + s);
             getCurrentRepresentation().enter(transition, args);
         }
     }
@@ -267,4 +268,7 @@ public class StateMachine<S, T> {
                 params.toString());
     }
 
+    public void setLogger(Logger logger) {
+    	log = logger;
+    }
 }
