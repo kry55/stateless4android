@@ -1,2 +1,14 @@
 bin/
 target/
+
+#Android Studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+.idea/
+app/app.iml
+*.iml
+
