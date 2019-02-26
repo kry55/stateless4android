@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile rootProject.ext.supportV7
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation rootProject.ext.supportV7
 }
